@@ -4,7 +4,7 @@
 
 <p>NOTE: Game and Source Code Is Free to promote the development of WebVR for all:&nbsp; (Also giving special credit and respectful thanks to all the developers of A-frame and the many Github Libraries used in this code, you know who you are and you are all seriously great coders and more!!!)</p>
 
-<p><strong>System Requirements: VR Headset (hardware recommended, not required). Latest Firefox, Chrome or Edge, Samsung GearVR or Daydream? (not tested)&nbsp;</strong><strong>or HTC Vive or Oculus Go/Rift Browser supported.&nbsp; No guarantees it will stay that way . . .&nbsp; only testing can confirm functionality on any future headsets and VR platforms.</strong></p>
+<p><strong>System Requirements: VR Headset (hardware highly recommended, not required). Latest Firefox, Chrome or Edge, Samsung GearVR or Daydream? (not tested)&nbsp;</strong><strong>or HTC Vive or Oculus Go/Rift Browser supported.&nbsp; No guarantees it will stay that way . . .&nbsp; only testing can confirm functionality on any future headsets and VR platforms.</strong></p>
 
 <p>The Game:&nbsp; &nbsp;<a href="https://rocketvirtual.com/webvr/html/Space_Carousel_newbuild35.html">Space Carousel</a></p>
 
