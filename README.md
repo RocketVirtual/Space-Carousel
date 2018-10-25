@@ -1,7 +1,6 @@
 # Space-Carousel
 <img src="https://rocketvirtual.com/webvr/images/game_screenshot.jpg" />
-A Space Carousel ride experience (game) in WebVR populated with flying objects.
-<p><span style="font-size:18px"><span style="font-family:comic sans ms,cursive"><strong>A Space Carousel ride experience in <a href="https://webvr.info/">WebVR</a> populated with flying objects. Coded By Michael McAnally, August 13, 2018 using <a href="https://aframe.io/">A-Frame</a> and wonderful open source javascript libraries.</strong></span></span></p>
+<p><span style="font-size:18px"><span style="font-family:comic sans ms,cursive"><strong>A Space Carousel ride experience (game) in <a href="https://webvr.info/">WebVR</a> populated with flying objects. Coded By Michael McAnally, August 13, 2018 using <a href="https://aframe.io/">A-Frame</a> and wonderful open source javascript libraries.</strong></span></span></p>
 
 <p>NOTE: Game and Source Code Is Free to promote the development of WebVR for all:&nbsp; (Also giving special credit and respectful thanks to all the developers of A-frame and the many Github Libraries used in this code, you know who you are and you are all seriously great coders and more!!!)</p>
 
