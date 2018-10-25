@@ -12,17 +12,17 @@
 <!-- I've changed these to my own hosted library space to lock down any code changes (during developement), you might want to change back to your own or a valid CDN.  issue: <a-animation> was changed, see: https://github.com/aframevr/aframe/issues/1927 -->
 
     <script src="https://rocketvirtual.com/webvr/aframe-master/dist/aframe-master.min.js"></script>
-    <script src="https://rocketvirtual.com/webvr/aframe-super-hands-component-master/dist..."></script>
-    <script src="https://rocketvirtual.com/webvr/kframe-master/components/animation/dist/..."></script>
-    <script src="https://rocketvirtual.com/webvr/aframe-environment-component-master/dist..."></script>
-    <script src="https://rocketvirtual.com/webvr/aframe-alongpath-component-master/dist/a..." ></script>
-    <script src="https://rocketvirtual.com/webvr/aframe-curve-component-master/dist/afram..."></script>
-    <script src="https://rocketvirtual.com/webvr/aframe-extras-master/dist/aframe-extras...."></script>
-    <script src="https://rocketvirtual.com/webvr/aframe-event-set-component-master/dist/a..."></script>
-    <script src="https://rocketvirtual.com/webvr/aframe-mouse-cursor-component-master/dis..."></script>
-    <script src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/d..."></script>
+    <script src="https://rocketvirtual.com/webvr/aframe-super-hands-component-master/dist/super-hands.min.js"></script>
+    <script src="https://rocketvirtual.com/webvr/kframe-master/components/animation/dist/aframe-animation-component.min.js"></script>
+    <script src="https://rocketvirtual.com/webvr/aframe-environment-component-master/dist/aframe-environment-component.js"></script>
+    <script src="https://rocketvirtual.com/webvr/aframe-alongpath-component-master/dist/aframe-alongpath-component.min.js" ></script>
+    <script src="https://rocketvirtual.com/webvr/aframe-curve-component-master/dist/aframe-curve-component.min.js"></script>
+    <script src="https://rocketvirtual.com/webvr/aframe-extras-master/dist/aframe-extras.min.js"></script>
+    <script src="https://rocketvirtual.com/webvr/aframe-event-set-component-master/dist/aframe-event-set-component.min.js"></script>
+    <script src="https://rocketvirtual.com/webvr/aframe-mouse-cursor-component-master/dist/aframe-mouse-cursor-component.min.js"></script>
+    <script src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/dist/aframe-text-geometry-component.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="https://rocketvirtual.com/webvr/aframe-super-hands-component-master/exam...">
+    <link rel="stylesheet" type="text/css" href="https://rocketvirtual.com/webvr/aframe-super-hands-component-master/examples/assets/examples.css">
 
     <script type="text/javascript">
 
@@ -44,6 +44,7 @@ var indexElement = 0;  //reset to array index
 var counttx = 0, countup = true;
 
 var nIntervId;
+
 
 // originally was part of a point system, now changed to informational notes when objects are shot.  Reason: performance issues, too slow for mobile (i.e. non-tethered VR headsets).  
 function startPoints() {
@@ -85,12 +86,14 @@ function changePlanet() {
     document.getElementById('onplanet').setAttribute('environment', 'preset: ' + planets[m]);
 }
 
+
 // royalty free sounds
 function shoot_raygun(carousel_object) {
 
     if (indexElement > 5)  { 
         indexElement = 1;  //reset to array index
     }
+
 
   switch(carousel_object) {
     case "horse":
@@ -155,13 +158,16 @@ function shoot_raygun(carousel_object) {
 
     indexElement = indexElement + 1;
 
+
 }
 
- 
+
+
 
 function changeSpeed() {
 
     if (rotation_speed < 5700) {
+
 
         rotation_speed = 15500;
         
@@ -188,6 +194,7 @@ function changeSpeed() {
 
 }
 
+
 // Creates a multi-dimensional array
 
 function createArray(length) {
@@ -202,7 +209,9 @@ function createArray(length) {
     return arr;
 }
 
+
 // create a large 2 dimensional global array
+
 
 funFacts = createArray((numberOfArrayDimension + 1), 45);  // Note: first index in createArray is +1 more than the numberOfArrayDimension
 
@@ -273,7 +282,7 @@ funFacts[7][3] = " ";
 funFacts[7][4] = " ";
 funFacts[7][5] = " ";
 
- 
+
 
 // Component to do on click.
 AFRAME.registerComponent('cursor-listener', {
@@ -290,6 +299,7 @@ AFRAME.registerComponent('cursor-listener', {
         playMusicSpeed = 1;
         playSpeed = document.getElementById('playAudio');
         playSpeed.playbackRate = playMusicSpeed;
+
 
         //return all 9 objects to view
         document.getElementById('sittingDuckA').setAttribute('visible', true);
@@ -310,22 +320,23 @@ AFRAME.registerComponent('cursor-listener', {
         // change our environment, may pause play for a moment and redraw
         document.getElementById('onplanet').setAttribute('environment', 'preset: ' + planets[m]);
 
- 
+
 
     } else {
 
         // remove clicked object from view
         this.setAttribute('visible', false);
 
+
     }
 
- 
+
 
     });
   }
 });
 
-//   Solves Google mute of audio problem (and it is...) https://stackoverflow.com/questions/47921013/play-sound-on-click-in-a-fr...
+//   Solves Google mute of audio problem (and it is...) https://stackoverflow.com/questions/47921013/play-sound-on-click-in-a-frame?answertab=active#tab-top
 
 AFRAME.registerComponent('audiohandler', {
   init:function() {
@@ -362,6 +373,7 @@ AFRAME.registerComponent('audiohandler', {
 <!-- to embed uncomment this and style a-scene above    <a-scene embedded>  -->
     <a-scene>
 
+
      <a-assets>
         <a-mixin id="pointer" raycaster="showLine: true; objects: .clickable, a-link"
                   super-hands="colliderEvent: raycaster-intersection;
@@ -390,11 +402,12 @@ AFRAME.registerComponent('audiohandler', {
 
         <img id="pink" src="https://rocketvirtual.com/webvr/images/fontcolor.png" />
 
-        <a-asset-item id="dawningFont" src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/e..."></a-asset-item>
+        <a-asset-item id="dawningFont" src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/examples/vaporwave/fonts/dawningOfANewDayRegular.typeface.json"></a-asset-item>
 
-        <a-asset-item id="exoFont" src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/e..."></a-asset-item>
+        <a-asset-item id="exoFont" src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/examples/vaporwave/fonts/exo2Black.typeface.json"></a-asset-item>
 
-        <a-asset-item id="exoItalicFont" src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/e..."></a-asset-item>
+        <a-asset-item id="exoItalicFont" src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/examples/vaporwave/fonts/exo2BlackItalic.typeface.json"></a-asset-item>
+
 
     </a-assets>
 
@@ -424,6 +437,7 @@ AFRAME.registerComponent('audiohandler', {
                                                   <a-animation begin="fusing" easing="ease-in" attribute="scale"
                                                         fill="backwards" from="1 1 1" to="0.2 0.2 0.2" dur="1000"></a-animation>
 
+
                                                         <a-entity id="Points" text-geometry="value: text"; font: #dawningFont; bevelEnabled: true; bevelSize: 0.05; bevelThickness: 0.05; curveSegments: 12; size: .15; height: 0;" material="color:lavenderblush; metalness:1; roughness: 0; sphericalEnvMap: #pink; transparent: true; opacity: 0" position=".35 0 0" scale=".25 .25 .25" ></a-entity>
 
                                             </a-cursor>
@@ -449,6 +463,7 @@ AFRAME.registerComponent('audiohandler', {
 
         <a-box id="gameLogo" class="clickable" position = "0 29 -12" material="src: #game_logo-image" scale="5.25 4 .25" onclick="gameLogo();" ></a-box>
 
+
     <!-- Setup tracs A-I for the carousel.  Not a true circle, but it works...  Varying the y-axis for height in air of object following trac. -->
 
     <a-curve id="tracA" >
@@ -463,6 +478,7 @@ AFRAME.registerComponent('audiohandler', {
         <a-curve-point position="0 1 8" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
     </a-curve>
 
+
     <a-curve id="tracB" curve="">
         <a-curve-point position="0 7 2" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
         <a-curve-point position="-6 7 4" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
@@ -474,6 +490,7 @@ AFRAME.registerComponent('audiohandler', {
         <a-curve-point position="6 7 5" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
         <a-curve-point position="0 7 2" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
     </a-curve>
+
 
     <a-curve id="tracC" curve="">
         <a-curve-point position="12 1 11" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
@@ -499,6 +516,7 @@ AFRAME.registerComponent('audiohandler', {
         <a-curve-point position="9 20 -7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
     </a-curve>
 
+
     <a-curve id="tracE" curve="">
         <a-curve-point position="0 1 -12" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
         <a-curve-point position="-2 1 -7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
@@ -510,6 +528,7 @@ AFRAME.registerComponent('audiohandler', {
         <a-curve-point position="8 1 -14" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
         <a-curve-point position="0 1 -12" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
     </a-curve>
+
 
     <a-curve id="tracF" curve="">
         <a-curve-point position="7 14 -9" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
@@ -534,6 +553,7 @@ AFRAME.registerComponent('audiohandler', {
         <a-curve-point position="1 24 -7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
     </a-curve>
 
+
     <a-curve id="tracH" curve="">
         <a-curve-point position="-2 10 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
         <a-curve-point position="-4 10 -5" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
@@ -546,6 +566,7 @@ AFRAME.registerComponent('audiohandler', {
         <a-curve-point position="-2 10 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
     </a-curve>
 
+
     <a-curve id="tracI" curve="">
         <a-curve-point position="-12 1 1" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
         <a-curve-point position="-14 1 9" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
@@ -557,9 +578,10 @@ AFRAME.registerComponent('audiohandler', {
         <a-curve-point position="-12 1 1" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
     </a-curve>
 
- 
+
 
     <!-- objects following the trac.  Letter A-I corresponds to trac curve above.  Collada and glTF objects loaded here, move to assets later... Note: All objects are royalty free and/or created by me. -->
+
 
     <a-collada-model id="sittingDuckA" class="clickable" src="#horse" alongpath="curve:#tracA;loop:true;dur:12000;rotate:true" scale="" position="-4.27 1 -6" shadow="receive:false" rotation="-24 -90 90" animation__rotate="property:rotation;dur:3000;easing:linear;loop:true;from:0 0 0;to:0 360 0" onclick="stopPoints();shoot_raygun('horse');" cursor-listener></a-collada-model>
 
@@ -579,6 +601,7 @@ AFRAME.registerComponent('audiohandler', {
 
     <a-entity id="sittingDuckI" class="clickable" gltf-model="#raygun" scale="" alongpath="curve:#tracI;loop:true;dur:12000;rotate:true" position="0.98 1 6.65" shadow="receive:false" rotation="0 -175.74 0" onclick="stopPoints();shoot_raygun('raygun');" cursor-listener></a-entity>
 
+
     <!-- Tune the world environment to the desired settings  -->
 
     <a-entity id="onplanet" environment="preset: forest; shadow: true; dressingAmount: 125"></a-entity>
@@ -587,7 +610,7 @@ AFRAME.registerComponent('audiohandler', {
 
     <a-entity class="environmentDressing environment" visible="false"></a-entity>
 
- 
+
 
 </a-scene>
 <script>
