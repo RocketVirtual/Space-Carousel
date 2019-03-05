@@ -107,55 +107,55 @@ function shoot_raygun(carousel_object) {
     case "horse":
           startPoints();
           brea.play();
-          changeSpeed();
+          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[0][indexElement]);
         break;
     case "duck":
           startPoints();
           squawk.play();
-          changeSpeed();
+          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[1][indexElement]);
         break;
     case "rocket":
           startPoints();
           thrust.play();
-          changeSpeed();
+          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[2][indexElement]);
         break;
     case "raygun":
           startPoints();
           zap.play();
-          changeSpeed();
+          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[3][indexElement]);
         break;
     case "saucer":
           startPoints();
           flyscr.play();
-          changeSpeed();
+          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[4][indexElement]);
         break;
     case "trex":
           startPoints();
           troar.play();
-          changeSpeed();
+          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[5][indexElement]);
         break;
     case "ceratops":
           startPoints();
           croar.play();
-          changeSpeed();
+          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[6][indexElement]);
         break;
     case "heart":
           startPoints();
           heartsnd.play();
-          changeSpeed();
+          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[7][indexElement]);
         break;
     case "key":
           startPoints();
           keysnd.play();
-          changeSpeed();
+          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[8][indexElement]);
         break;
     default:
@@ -311,9 +311,9 @@ AFRAME.registerComponent('cursor-listener', {
         k = 18;  //reset to beginning
 
         // return music to normal speed
-        playMusicSpeed = 1;
-        playSpeed = document.getElementById('playAudio');
-        playSpeed.playbackRate = playMusicSpeed;
+        //playMusicSpeed = 1;
+        //playSpeed = document.getElementById('playAudio');
+        //playSpeed.playbackRate = playMusicSpeed;
 
 
         //return all 18 objects to view
@@ -421,7 +421,7 @@ function playSound() {
 
         <img crossorigin="anonymous" id="music-image_on" src="https://rocketvirtual.com/webvr/images/music.png">
         <img crossorigin="anonymous" id="planet_cntl-image" src="https://rocketvirtual.com/webvr/images/planets.png">
-        <img crossorigin="anonymous" id="speed_cntl-image" src="https://rocketvirtual.com/webvr/images/speed.png">
+        <!-- <img crossorigin="anonymous" id="speed_cntl-image" src="https://rocketvirtual.com/webvr/images/speed.png">  -->
         <img crossorigin="anonymous" id="game_logo-image" src="https://rocketvirtual.com/webvr/images/game_logo2.png">
 
         <a-asset-item id="horse" src="https://rocketvirtual.com/webvr/models/Horse_Free.dae" shadow="receive: false"></a-asset-item>
@@ -484,7 +484,7 @@ function playSound() {
                                   to: 0 5 -17" begin="8000">
         </a-box>
 
-        <a-box id="speedButton" class="clickable" position = "2 26 -14" material="src: #speed_cntl-image" scale="1.25 1.25 .25" onclick="changeSpeed();" ></a-box>
+        <!-- <a-box id="speedButton" class="clickable" position = "2 26 -14" material="src: #speed_cntl-image" scale="1.25 1.25 .25" onclick="changeSpeed();" ></a-box> -->
 
         <a-box id="playButton" class="clickable" position = "-2 26 -14" material="src: #music-image_on" scale="1.25 1.25 .25" onclick="playSound();" audiohandler ></a-box>
 
