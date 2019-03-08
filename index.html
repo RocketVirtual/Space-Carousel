@@ -28,14 +28,10 @@
 
 var numberOfArrayDimension = 9;   //IMPORTANT: set to max number of first index of array dimension when adding a new array
 
-var playMusicSpeed = 1;
-
-var rotation_speed = 13500;
-
 var planets = ["forest", "yavapai", "contact", "egypt", "checkerboard", "goaland", "goldmine", "threetowers", "poison", "arches", "tron", "dream", "volcano", "starry", "osiris"];
 
 var m = 1;  //counter to visit another planet  
-var k = 18;  //counter to reset 18 objects visible again
+var k = 15;  //counter to reset 18 objects visible again
 
 var indexElement = 0;  //reset to array index
 
@@ -54,9 +50,9 @@ var croar = new Audio('https://rocketvirtual.com/webvr/mp3/ceratops.mp3');
 var keysnd = new Audio('https://rocketvirtual.com/webvr/mp3/keys.mp3');
 var heartsnd = new Audio('https://rocketvirtual.com/webvr/mp3/magical_sparkle.mp3');
 
-// originally was part of a point system, now changed to informational notes when objects are shot.  Reason: performance issues, too slow for mobile (i.e. non-tethered VR headsets).  
+// originally was part of a point system, now changed to informational notes when objects are shot.
 function startPoints() {
-    nIntervId = setInterval(fadePoints, 400);
+    nIntervId = setInterval(fadePoints, 600);
 }
  
 function fadePoints()
@@ -107,55 +103,46 @@ function shoot_raygun(carousel_object) {
     case "horse":
           startPoints();
           brea.play();
-          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[0][indexElement]);
         break;
     case "duck":
           startPoints();
           squawk.play();
-          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[1][indexElement]);
         break;
     case "rocket":
           startPoints();
           thrust.play();
-          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[2][indexElement]);
         break;
     case "raygun":
           startPoints();
           zap.play();
-          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[3][indexElement]);
         break;
     case "saucer":
           startPoints();
           flyscr.play();
-          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[4][indexElement]);
         break;
     case "trex":
           startPoints();
           troar.play();
-          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[5][indexElement]);
         break;
     case "ceratops":
           startPoints();
           croar.play();
-          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[6][indexElement]);
         break;
     case "heart":
           startPoints();
           heartsnd.play();
-          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[7][indexElement]);
         break;
     case "key":
           startPoints();
           keysnd.play();
-          //changeSpeed();
           document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[8][indexElement]);
         break;
     default:
@@ -164,40 +151,6 @@ function shoot_raygun(carousel_object) {
 
     indexElement = indexElement + 1;
 
-
-}
-
-
-
-
-function changeSpeed() {
-
-    if (rotation_speed < 10000) {
-
-
-        rotation_speed = 13500;
-        playMusicSpeed = playMusicSpeed - 0.245;
-        
-    }
-
-    rotation_speed = rotation_speed - 500;
-
-    // speed up the carousel for those who want to go faster, I take no responsibility if you get dizzy or burn up your mobile VR unit
-    document.getElementById('sittingDuckA').setAttribute('alongpath', 'dur: ' + rotation_speed.toString());
-    document.getElementById('sittingDuckB').setAttribute('alongpath', 'dur: ' + rotation_speed.toString());
-    document.getElementById('sittingDuckC').setAttribute('alongpath', 'dur: ' + rotation_speed.toString());
-    document.getElementById('sittingDuckD').setAttribute('alongpath', 'dur: ' + rotation_speed.toString());
-    document.getElementById('sittingDuckE').setAttribute('alongpath', 'dur: ' + rotation_speed.toString());
-    document.getElementById('sittingDuckF').setAttribute('alongpath', 'dur: ' + rotation_speed.toString());
-    document.getElementById('sittingDuckG').setAttribute('alongpath', 'dur: ' + rotation_speed.toString());
-    document.getElementById('sittingDuckH').setAttribute('alongpath', 'dur: ' + rotation_speed.toString());
-    document.getElementById('sittingDuckI').setAttribute('alongpath', 'dur: ' + rotation_speed.toString());
-       
-    // speed up the music every time
-    playMusicSpeed = playMusicSpeed + 0.035;   
-
-    playSpeed = document.getElementById('playAudio');
-    playSpeed.playbackRate = playMusicSpeed;
 
 }
 
@@ -218,8 +171,6 @@ function createArray(length) {
 
 
 // create a large 2 dimensional global array
-
-
 funFacts = createArray((numberOfArrayDimension + 1), 45);  // Note: first index in createArray is +1 more than the numberOfArrayDimension
 
 // load array values
@@ -308,15 +259,9 @@ AFRAME.registerComponent('cursor-listener', {
     k = k - 1;
 
     if (k < 1)  { 
-        k = 18;  //reset to beginning
+        k = 15;  //reset to beginning
 
-        // return music to normal speed
-        //playMusicSpeed = 1;
-        //playSpeed = document.getElementById('playAudio');
-        //playSpeed.playbackRate = playMusicSpeed;
-
-
-        //return all 18 objects to view
+        //return all 15 objects to view
         document.getElementById('sittingDuckA').setAttribute('visible', true);
         document.getElementById('sittingDuckB').setAttribute('visible', true);
         document.getElementById('sittingDuckC').setAttribute('visible', true);
@@ -327,7 +272,6 @@ AFRAME.registerComponent('cursor-listener', {
         document.getElementById('sittingDuckH').setAttribute('visible', true);
         document.getElementById('sittingDuckI').setAttribute('visible', true);
         // spinning hearts
-
         document.getElementById('sittingDuckK').setAttribute('visible', true);
         document.getElementById('sittingDuckL').setAttribute('visible', true);
         document.getElementById('sittingDuckM').setAttribute('visible', true);
@@ -335,10 +279,6 @@ AFRAME.registerComponent('cursor-listener', {
         document.getElementById('sittingDuckO').setAttribute('visible', true);
         document.getElementById('sittingDuckP').setAttribute('visible', true);
         document.getElementById('sittingDuckQ').setAttribute('visible', true);
-
-        document.getElementById('sittingDuckS').setAttribute('visible', true);
-        document.getElementById('sittingDuckT').setAttribute('visible', true);
-        document.getElementById('sittingDuckU').setAttribute('visible', true);
 
         //visit another planet
         m = m + 1;
@@ -348,17 +288,12 @@ AFRAME.registerComponent('cursor-listener', {
         // change our environment, may pause play for a moment and redraw
         document.getElementById('onplanet').setAttribute('environment', 'preset: ' + planets[m]);
 
-
-
     } else {
 
         // remove clicked object from view
         this.setAttribute('visible', false);
 
-
     }
-
-
 
     });
   }
@@ -385,7 +320,7 @@ AFRAME.registerComponent('audiohandler', {
 
 function playSound() {
 
-//alert("Sound playing functional!!!");
+//alert("TEST Sound playing functional!!!");
 }
 
   </script>
@@ -421,7 +356,6 @@ function playSound() {
 
         <img crossorigin="anonymous" id="music-image_on" src="https://rocketvirtual.com/webvr/images/music.png">
         <img crossorigin="anonymous" id="planet_cntl-image" src="https://rocketvirtual.com/webvr/images/planets.png">
-        <!-- <img crossorigin="anonymous" id="speed_cntl-image" src="https://rocketvirtual.com/webvr/images/speed.png">  -->
         <img crossorigin="anonymous" id="game_logo-image" src="https://rocketvirtual.com/webvr/images/game_logo2.png">
 
         <a-asset-item id="horse" src="https://rocketvirtual.com/webvr/models/Horse_Free.dae" shadow="receive: false"></a-asset-item>
@@ -441,7 +375,7 @@ function playSound() {
         <img crossorigin="anonymous" id="front" src="https://rocketvirtual.com/webvr/images/box-logo3-front.png">
         <img crossorigin="anonymous" id="back" src="https://rocketvirtual.com/webvr/images/box-logo-back.png">
 
-        <img id="blue" src="https://rocketvirtual.com/webvr/images/fontcolor.png" />
+        <img crossorigin="anonymous" id="blue" src="https://rocketvirtual.com/webvr/images/fontcolor.png" />
 
         <a-asset-item id="dawningFont" src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/examples/vaporwave/fonts/dawningOfANewDayRegular.typeface.json"></a-asset-item>
 
@@ -457,18 +391,18 @@ function playSound() {
                                          easing: easeInSine;
                                          loop: true;
                                          from: 0 1.6 0;
-                                         to: 0 36 0" begin="20000" >
+                                         to: 0 30 0" begin="20000" >
             <a-camera look-controls wasd-controls mouse-cursor id="camera_zoom" position="0 1.6 0" user-height="1.6"
                                 animation="property: position;
                                          dur: 15000;
-                                         from: 0 0 75;
+                                         from: 0 0 50;
                                          to: 0 1.6 0;
                                          easing: easeInOutSine;
                                          loop: false;
                                          direction: normal" >
                                             <a-entity id="rhand" mixin="controller-right">
-                                                             <a-entity id="Points" text-geometry="value: text"; font: #dawningFont; bevelEnabled: true; bevelSize: 0.05; bevelThickness: 0.05; curveSegments: 12; size: .15; height: 0;" material="color:lavenderblush; metalness:1; roughness: 0; sphericalEnvMap: #blue; transparent: true; opacity: 0" position=".35 0 -6" scale=".25 .25 .25" ></a-entity>
                                             </a-entity><a-entity id="lhand" mixin="controller-left"></a-entity>
+                                            <a-entity id="Points" text-geometry="value: text"; font: #dawningFont; bevelEnabled: true; bevelSize: 0.05; bevelThickness: 0.05; curveSegments: 12; size: .15; height: 0;" material="color:lavenderblush; metalness:1; roughness: 0; sphericalEnvMap: #blue; transparent: true; opacity: 0" position=".35 0 -5" scale=".25 .25 .25" ></a-entity>
               </a-camera>
     </a-entity>
 
@@ -481,21 +415,18 @@ function playSound() {
                                     dur: 20000;
                             easing: easeInSine;
                                     loop: true;
-                                  to: 0 5 -17" begin="8000">
-        </a-box>
-
-        <!-- <a-box id="speedButton" class="clickable" position = "2 26 -14" material="src: #speed_cntl-image" scale="1.25 1.25 .25" onclick="changeSpeed();" ></a-box> -->
+                                  to: 0 5 -17" begin="8000"></a-box>
 
         <a-box id="playButton" class="clickable" position = "-2 26 -14" material="src: #music-image_on" scale="1.25 1.25 .25" onclick="playSound();" audiohandler ></a-box>
 
-        <a-box id="gameLogo" position="0 29.5 -18" scale="5.48 4.76 5.36" multisrc="srcs:#right,#left,#top,#bottom,#front,#back" opacity="1">
-            <a-animation attribute="rotation"
-               dur="50000"
-               fill="forwards"
-               to="0 360 0"
-               repeat="indefinite"></a-animation></a-box>
+        <a-box id="gameLogo" position="0 29.5 -18" scale="5.48 4.76 5.36" multisrc="srcs:#right,#left,#top,#bottom,#front,#back" animation="property: rotation;
+                                      fill: forwards;
+                                        dur: 50000;
+                                        begin: 8000;
+                                         to: 0 360 0;
+                                         repeat: indefinite"  opacity="1"></a-box>
 
-    <!-- Setup tracs A-I for the carousel.  Not a true circle, but it works...  Varying the y-axis for height in air of object following trac. -->
+    <!-- Setup tracs A-I for the carousel.  Not a true circle, but it works...  Varying the y-axis for height in air of object following trac.  Could be more complex tracks in the future. -->
 
     <a-curve id="tracA" >
         <a-curve-point position="0 1 8" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
@@ -611,7 +542,7 @@ function playSound() {
 
 
 
-    <!-- objects following the trac.  Letter A-I corresponds to trac curve above.  Collada and glTF objects loaded here, move to assets later... Note: All objects are royalty free and/or created by me. -->
+    <!-- objects following the trac.  Letter A-I corresponds to trac curve above.  Collada and glTF objects loaded here... Note: All objects are royalty free and/or created by me. -->
 
 
     <a-collada-model id="sittingDuckA" class="clickable" src="#horse" alongpath="curve:#tracA;loop:true;dur:12000;rotate:true" scale="" position="-4.27 1 -6" shadow="receive:false" rotation="-24 -90 90" onclick="stopPoints();shoot_raygun('horse');" cursor-listener></a-collada-model>
@@ -635,26 +566,21 @@ function playSound() {
 <!-- stationary hearts -->
 
 
-    <a-obj-model id="sittingDuckK" class="clickable" position="1.5 3.6 -8" scale="0.01 0.01 0.01" src="#heart" material="color: #F585D3"
+    <a-obj-model id="sittingDuckK" class="clickable" position="2.5 3.6 -8" scale="0.02 0.02 0.02" src="#heart" material="color: #F585D3"
        animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>
-    <a-obj-model id="sittingDuckL" class="clickable" position="1 3.6 -8" scale="0.02 0.02 0.02" src="#heart" material="color: #B876F6"
+    <a-obj-model id="sittingDuckL" class="clickable" position="1.5 3.6 -8" scale="0.03 0.03 0.03" src="#heart" material="color: #B876F6"
        animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>   
-    <a-obj-model id="sittingDuckM" class="clickable" position="0.1 3.6 -8" scale="0.03 0.03 0.03" src="#heart" material="color: #E9EDF8"
+    <a-obj-model id="sittingDuckM" class="clickable" position="0.1 3.6 -8" scale="0.04 0.04 0.04" src="#heart" material="color: #E9EDF8"
        animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>
 
-    <a-obj-model id="sittingDuckO" class="clickable" position="2.5 8.6 -6" scale="0.01 0.01 0.01" src="#heart" material="color: #F44268"
+    <a-obj-model id="sittingDuckO" class="clickable" position="2.5 8.6 -6" scale="0.02 0.02 0.02" src="#heart" material="color: #F44268"
        animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>
-    <a-obj-model id="sittingDuckP" class="clickable" position="2 8.6 -6" scale="0.02 0.02 0.02" src="#heart" material="color: #F44268"
+    <a-obj-model id="sittingDuckP" class="clickable" position="1.5 8.6 -6" scale="0.03 0.03 0.03" src="#heart" material="color: #F44268"
        animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>   
-    <a-obj-model id="sittingDuckQ" class="clickable" position="1.1 8.6 -6" scale="0.03 0.03 0.03" src="#heart" material="color: #F44268"
+    <a-obj-model id="sittingDuckQ" class="clickable" position="0.1 8.6 -6" scale="0.04 0.04 0.04" src="#heart" material="color: #F44268"
        animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>
 
-   <a-obj-model id="sittingDuckS" class="clickable" position="-5.5 5.6 -3" scale="0.01 0.01 0.01" src="#heart" material="color: #F585D3"
-       animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>
-    <a-obj-model id="sittingDuckT" class="clickable" position="-5 5.6 -3" scale="0.02 0.02 0.02" src="#heart" material="color: #B876F6"
-       animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>   
-    <a-obj-model id="sittingDuckU" class="clickable" position="-4.1 5.6 -3" scale="0.03 0.03 0.03" src="#heart" material="color: #E9EDF8"
-       animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>  
+  
 
     <!-- Tune the world environment to the desired settings  -->
 
