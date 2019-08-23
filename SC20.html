@@ -1,0 +1,866 @@
+<!DOCTYPE>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,shrink-to-fit=no,user-scalable=no,maximum-scale=1,minimum-scale=1">
+    <title>Super Duper Space Carousel</title>
+    <meta name="description" content="Space Carousel - A experience in WebVR populated with flying objects. Coded By Michael McAnally using A-Frame."></meta>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="gray-translucent" />
+    <script src="https://rocketvirtual.com/aframe-master_9.2_old3/dist/aframe-master.min.js"></script>
+    <script src="https://rocketvirtual.com/aframe-environment-component-master/dist/aframe-environment-component.js"></script>
+    <script src="https://rocketvirtual.com/aframe-extras-master/dist/aframe-extras.min.js"></script>  
+    <script src="https://rocketvirtual.com/aframe-teleport-controls-master/dist/aframe-teleport-controls.min.js"></script>
+    <script src="https://rocketvirtual.com/aframe-particle-system-component-master/dist/aframe-particle-system-component.min.js"></script>
+    <script src="https://rocketvirtual.com/superframe-master/components/text-geometry/dist/aframe-text-geometry-component.min.js"></script>
+    <script src="https://rocketvirtual.com/aframe-alongpath-component-master/dist/aframe-alongpath-component.min.js" ></script>
+    <script src="https://rocketvirtual.com/aframe-curve-component-master/dist/aframe-curve-component.min.js"></script>
+    <script src="https://rocketvirtual.com/aframe-mouse-cursor-component-master/dist/aframe-mouse-cursor-component.min.js"></script>
+    <script src="https://rocketvirtual.com/aframe-multisrc-component-master/dist/aframe-multisrc-component.js"></script>
+
+    <!-- for creating Navmesh... Also uncomment a-scene inspector-plugin-recast
+    <script src="https://recast-api.donmccurdy.com/aframe-inspector-plugin-recast.js"></script>
+-->
+
+    <style type="text/css">
+      #video-permission {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: white;
+          z-index: 10000;
+          display: none;
+      }
+      #video-permission-button {
+        position: fixed;
+        top: calc(50% - 1em);
+        left: calc(50% - 60px);
+        width: 120px;
+        height: 2em;
+      }
+    </style>
+
+    <script type="text/javascript">
+
+// Yes, I'm using some global variables here.
+
+var numberOfArrayDimension = 9;   //IMPORTANT: set to max number of first index of array dimension when adding a new array
+
+var planets = ["forest", "yavapai", "contact", "egypt", "checkerboard", "goaland", "goldmine", "threetowers", "poison", "arches", "tron", "dream", "volcano", "starry", "osiris"];
+
+var m = 1;  //counter to visit another planet  
+var k = 15;  //counter to reset 18 objects visible again
+
+var indexElement = 0;  //reset to array index
+
+var counttx = 0, countup = true;
+
+var nIntervId;
+
+// Sound effects for objects loaded
+var squawk = new Audio('https://rocketvirtual.com/webvr/mp3/duck.mp3');
+var brea = new Audio('https://rocketvirtual.com/webvr/mp3/horse.mp3');
+var thrust = new Audio('https://rocketvirtual.com/webvr/mp3/rocket.mp3');
+var zap = new Audio('https://rocketvirtual.com/webvr/mp3/raygun.mp3');
+var flyscr = new Audio('https://rocketvirtual.com/webvr/mp3/saucer.mp3');
+var troar = new Audio('https://rocketvirtual.com/webvr/mp3/trex.mp3');
+var croar = new Audio('https://rocketvirtual.com/webvr/mp3/ceratops.mp3');
+var keysnd = new Audio('https://rocketvirtual.com/webvr/mp3/keys.mp3');
+var heartsnd = new Audio('https://rocketvirtual.com/webvr/mp3/magical_sparkle.mp3');
+
+// originally was part of a point system, now changed to informational notes when objects are shot.
+function startPoints() {
+    nIntervId = setInterval(fadePoints, 600);
+}
+ 
+function fadePoints()
+{
+  if (countup)
+  {
+    counttx = counttx + .10;
+    if (counttx >= 1)
+      countup = false;
+  }
+  else
+  {
+    counttx = counttx - .10;
+    if (counttx <= 0)
+      countup = true;
+  }
+  
+  document.getElementById('Points').setAttribute('material', 'opacity: ' + counttx.toString());
+
+}
+ 
+function stopPoints() {
+
+      document.getElementById('Points').setAttribute('material', 'opacity: 0');
+      clearInterval(nIntervId);
+}
+  
+
+function changePlanet() {
+    m = m + 1;
+    if (m > planets.length)  { 
+        m = 0;  //reset to array beginning
+    }
+    // change our environment, may pause play for a moment and redraw
+    document.getElementById('onplanet').setAttribute('environment', 'preset: ' + planets[m]);
+}
+
+
+// royalty free sounds
+function shoot_raygun(carousel_object) {
+
+    if (indexElement > 5)  { 
+        indexElement = 1;  //reset to array index
+    }
+
+
+  switch(carousel_object) {
+    case "horse":
+          startPoints();
+          brea.play();
+          document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[0][indexElement]);
+        break;
+    case "duck":
+          startPoints();
+          squawk.play();
+          document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[1][indexElement]);
+        break;
+    case "rocket":
+          startPoints();
+          thrust.play();
+          document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[2][indexElement]);
+        break;
+    case "raygun":
+          startPoints();
+          zap.play();
+          document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[3][indexElement]);
+        break;
+    case "saucer":
+          startPoints();
+          flyscr.play();
+          document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[4][indexElement]);
+        break;
+    case "trex":
+          startPoints();
+          troar.play();
+          document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[5][indexElement]);
+        break;
+    case "ceratops":
+          startPoints();
+          croar.play();
+          document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[6][indexElement]);
+        break;
+    case "heart":
+          startPoints();
+          heartsnd.play();
+          document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[7][indexElement]);
+        break;
+    case "key":
+          startPoints();
+          keysnd.play();
+          document.getElementById('Points').setAttribute('text-geometry', 'value: ' + funFacts[8][indexElement]);
+        break;
+    default:
+
+    }
+
+    indexElement = indexElement + 1;
+
+
+}
+
+
+// Creates a multi-dimensional array
+
+function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
+
+
+// create a large 2 dimensional global array
+funFacts = createArray((numberOfArrayDimension + 1), 45);  // Note: first index in createArray is +1 more than the numberOfArrayDimension
+
+// load array values
+// Note: the 0 element is the object name
+
+// horse
+funFacts[0][0] = "Equus caballus: common name is\n Horse.";
+funFacts[0][1] = "Horses can sleep both lying\n down and standing up.";
+funFacts[0][2] = "Horses can run shortly after\n birth.";
+funFacts[0][3] = "Horses have been domesticated\n for over 5000 years.";
+funFacts[0][4] = "Horses have bigger eyes than\n any other mammal on land.";
+funFacts[0][5] = "Horses have evolved from much\n smaller ancestors.";
+
+// duck
+funFacts[1][0] = "Anas platyrhynchos: common name\n is Duck.";
+funFacts[1][1] = "A yellow rubber duck has achieved\n iconic status in western pop culture.";
+funFacts[1][2] = "The rubber duck is symbolically\n linked with bathing.";
+funFacts[1][3] = " ";
+funFacts[1][4] = " ";
+funFacts[1][5] = " ";
+
+// rocket
+funFacts[2][0] = "Rocket";
+funFacts[2][1] = "The first rocket was invented by\n the Chinese around year 1200.";
+funFacts[2][2] = "Rockets were originally used for\n fireworks and for rescuing people at sea.";
+funFacts[2][3] = "Robert Goddard is considered the father\n of modern rocketry. He built the first\n liquid-fueled rocket in 1926.";
+funFacts[2][4] = "A typical rocket produces more than a\n million pounds of thrust.";
+funFacts[2][5] = "Launch rockets are actually several\n rockets linked together.";
+
+// raygun
+funFacts[3][0] = "Raygun";
+funFacts[3][1] = "A raygun is a science fiction particle-beam\n weapon that fires what is usually destructive energy.";
+funFacts[3][2] = "They have various alternate names:\n ray gun, death ray, beam gun, blaster,\n laser gun, laser pistol, phaser, zap gun, etc.";
+funFacts[3][3] = "A very early example of a raygun is\n the Heat-Ray featured in H. G. Wells'\n novel The War of the Worlds (1898).";
+funFacts[3][4] = "Science fiction during the 1920s\n described death rays.";
+funFacts[3][5] = " ";
+
+// saucer
+funFacts[4][0] = "Flying Saucer";
+funFacts[4][1] = "The term UFO for Unidentified Flying\n Object was coined by US Air Force officer\n Edward Ruppelt in 1952.";
+funFacts[4][2] = "Between 1947 and 1969, 12,618 UFO\n sightings were reported to Project\n Blue Book.";
+funFacts[4][3] = "In Roswell, New Mexico on July 8th of 1947,\n an information office publicized the recovery\n of a crashed flying disc.";
+funFacts[4][4] = "The book Flying Saucers from Outer Space,\n written by author Donald E. Keyhoe in\n 1953, used the term UFO.";
+funFacts[4][5] = " ";
+
+// trex
+funFacts[5][0] = "Tyrannosaurus";
+funFacts[5][1] = "Tyrannosaurus commonly refered to\n as T-Rex";
+funFacts[5][2] = "A person who studies dinosaurs\n is called a paleontologist.";
+funFacts[5][3] = "Dinosaurs lived on earth until\n 65 million years ago.";
+funFacts[5][4] = " ";
+funFacts[5][5] = " ";
+        
+// ceratops
+funFacts[6][0] = "Triceratops";
+funFacts[6][1] = "Modern birds descended from a group\n of two-legged dinosaurs known as theropods.";
+funFacts[6][2] = "Scientist believe dinosaurs became\n extinct after a large metior impacted\n the earth.";
+funFacts[6][3] = " ";
+funFacts[6][4] = " ";
+funFacts[6][5] = " ";
+
+// Heart
+funFacts[7][0] = "heart";
+funFacts[7][1] = " ";
+funFacts[7][2] = " ";
+funFacts[7][3] = " ";
+funFacts[7][4] = " ";
+funFacts[7][5] = " ";
+
+// key
+funFacts[8][0] = "key";
+funFacts[8][1] = " ";
+funFacts[8][2] = " ";
+funFacts[8][3] = " ";
+funFacts[8][4] = " ";
+funFacts[8][5] = " ";
+
+
+
+// Component to do on click.
+AFRAME.registerComponent('cursor-listener', {
+  init: function () {
+
+    this.el.addEventListener('click', function (evt) {
+    //count down the opbjects
+    k = k - 1;
+
+    if (k < 1)  { 
+        k = 15;  //reset to beginning
+
+        //return all 15 objects to view
+        document.getElementById('sittingDuckA').setAttribute('visible', true);
+        document.getElementById('sittingDuckB').setAttribute('visible', true);
+        document.getElementById('sittingDuckC').setAttribute('visible', true);
+        document.getElementById('sittingDuckD').setAttribute('visible', true);
+        document.getElementById('sittingDuckE').setAttribute('visible', true);
+        document.getElementById('sittingDuckF').setAttribute('visible', true);
+        document.getElementById('sittingDuckG').setAttribute('visible', true);
+        document.getElementById('sittingDuckH').setAttribute('visible', true);
+        document.getElementById('sittingDuckI').setAttribute('visible', true);
+        // spinning hearts
+        document.getElementById('sittingDuckK').setAttribute('visible', true);
+        document.getElementById('sittingDuckL').setAttribute('visible', true);
+        document.getElementById('sittingDuckM').setAttribute('visible', true);
+
+        document.getElementById('sittingDuckO').setAttribute('visible', true);
+        document.getElementById('sittingDuckP').setAttribute('visible', true);
+        document.getElementById('sittingDuckQ').setAttribute('visible', true);
+
+        //visit another planet
+        m = m + 1;
+        if (m > planets.length)  { 
+            m = 0;  //reset to array beginning
+        }
+        // change our environment, may pause play for a moment and redraw
+        document.getElementById('onplanet').setAttribute('environment', 'preset: ' + planets[m]);
+
+    } else {
+
+        // remove clicked object from view
+        this.setAttribute('visible', false);
+
+    }
+
+    });
+  }
+});
+
+
+
+      // Component to do on click.
+      AFRAME.registerComponent('click-listener', {
+        init: function () {
+
+            this.el.addEventListener('click', function (evt) {
+
+                // remove clicked object from view
+                this.setAttribute('visible', false);
+                //slower...
+                //document.getElementById('cube').setAttribute('visible', false);
+
+
+            });
+        }
+      });
+
+      function doSomethingElse() {
+        //window.location.href="https://rocketvirtual.com";
+        document.getElementById('sphere').setAttribute('color', 'purple');
+      }
+
+      //   Solves Google mute of audio problem (and it is...) https://stackoverflow.com/questions/47921013/play-sound-on-click-in-a-frame?answertab=active#tab-top
+      AFRAME.registerComponent('audiohandler', {
+        init:function() {
+            let playing = false;
+            let audio = document.querySelector("#playAudio");
+            this.el.addEventListener('click', () => {
+
+                if(!playing) {
+                    audio.play();
+                } else {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+                playing = !playing;
+            });
+        }
+      })
+
+  </script>
+
+  </head>
+  <body>
+
+    <div id="video-permission">
+      <button id="video-permission-button">Allow VR Video</button>
+    </div>
+
+    <button id="playButton" type="button">Play Music</button>
+    <!-- I like the sound of this fun, joyful Carnival Banna tune for game: this "Royalty Purchase" for 10,000 downloads -->
+    <audio id="playAudio" autoplay loop>
+        <source src="https://rocketvirtual.com/webvr/mp3/Carnival_Banana.mp3" type="audio/mpeg">
+    </audio>
+
+<!-- used for creating Navmesh... see javascript component above <a-scene inspector-plugin-recast>  https://github.com/donmccurdy/aframe-inspector-plugin-recast-->
+
+    <a-scene background="color: #FAFAFA">
+
+      <a-assets>
+
+        <img crossorigin="anonymous" id="music-image_on" src="https://rocketvirtual.com/webvr/images/music.png">
+        <img crossorigin="anonymous" id="planet_cntl-image" src="https://rocketvirtual.com/webvr/images/planets.png">
+        <img crossorigin="anonymous" id="game_logo-image" src="https://rocketvirtual.com/webvr/images/game_logo2.png">
+
+        <a-asset-item id="horse" src="https://rocketvirtual.com/gltf/Horse_Free.glb" shadow="receive: false"></a-asset-item>
+        <a-asset-item id="rocket" src="https://rocketvirtual.com/webvr/gltf/rocket4.glb" shadow="receive: false"></a-asset-item>
+        <a-asset-item id="raygun" src="https://rocketvirtual.com/webvr/gltf/raygun4/raygun.glb" shadow="receive: false"></a-asset-item>
+        <a-asset-item id="flyingsaucer" src="https://rocketvirtual.com/webvr/gltf/FlyingSaucer/fsaucer.glb" shadow="receive: false"></a-asset-item>
+        <a-asset-item id="trex" src="https://rocketvirtual.com/gltf/Trex_base_mesh.glb" shadow="receive: false"></a-asset-item>
+        <a-asset-item id="triceratops" src="https://rocketvirtual.com/gltf/Triceratops_base_mesh.glb" shadow="receive: false"></a-asset-item>
+        <a-asset-item id="duck" src="https://rocketvirtual.com/webvr/gltf/Duck.gltf" shadow="receive: false"></a-asset-item>
+        <a-asset-item id="key" src="https://rocketvirtual.com/gltf/Key.glb" shadow="receive: false"></a-asset-item>
+        <a-asset-item id="heart" src="https://rocketvirtual.com/webvr/obj/heart_lp.obj/heart_lp.obj" shadow="receive: false"></a-asset-item>
+
+        <img crossorigin="anonymous" id="right" src="https://rocketvirtual.com/webvr/images/box-logo-right.png">
+        <img crossorigin="anonymous" id="left" src="https://rocketvirtual.com/webvr/images/box-logo-left.png">
+        <img crossorigin="anonymous" id="top" src="https://rocketvirtual.com/webvr/images/box-logo-top.png">
+        <img crossorigin="anonymous" id="bottom" src="https://rocketvirtual.com/webvr/images/box-logo-bottom.png">
+        <img crossorigin="anonymous" id="front" src="https://rocketvirtual.com/webvr/images/box-logo3-front.png">
+        <img crossorigin="anonymous" id="back" src="https://rocketvirtual.com/webvr/images/box-logo-back.png">
+
+        <img crossorigin="anonymous" src="https://rocketvirtual.com/images/play.png" id="play" >
+        <img crossorigin="anonymous" src="https://rocketvirtual.com/images/pause.png" id="pause" >
+        <img crossorigin="anonymous" src="https://rocketvirtual.com/images/volume-normal.png" id="volume-normal" >
+        <img crossorigin="anonymous" src="https://rocketvirtual.com/images/volume-mute.png" id="volume-mute" >
+        <img crossorigin="anonymous" src="https://rocketvirtual.com/images/seek-back.png" id="seek-back" >
+        <img crossorigin="anonymous" src="https://rocketvirtual.com/images/speech.png" id="speech" >
+
+        <img crossorigin="anonymous" id="blue" src="https://rocketvirtual.com/webvr/images/fontcolor.png" />
+
+        <a-asset-item id="dawningFont" src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/examples/vaporwave/fonts/dawningOfANewDayRegular.typeface.json"></a-asset-item>
+
+        <a-asset-item id="exoFont" src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/examples/vaporwave/fonts/exo2Black.typeface.json"></a-asset-item>
+
+        <a-asset-item id="exoItalicFont" src="https://rocketvirtual.com/webvr/kframe-master/components/text-geometry/examples/vaporwave/fonts/exo2BlackItalic.typeface.json"></a-asset-item>
+
+
+        <a-asset-item id="optimerBoldFont" src="https://rawgit.com/mrdoob/three.js/dev/examples/fonts/optimer_bold.typeface.json"></a-asset-item>
+
+        <video crossorigin="anonymous" id="video-src" src="https://rocketvirtual.com/video/ggblowtide2017.mp4"></video>
+
+        <a-asset-item id="marbleFountain" src="../gltf/fountain/scene.gltf"></a-asset-item>
+        <img crossorigin="anonymous" id="grid" src="../images/opaic_grid.png">
+      </a-assets>
+
+      <!-- nav-mesh: protecting us from running thru sphere, cube and cylinder  -->
+      <a-entity id="navmesh-step" gltf-model="../gltf/navmesh_stepsup.gltf" visible="false" nav-mesh=""></a-entity>
+
+      <!-- Create the Park environment -->
+      <a-entity id="onplanet" environment="preset: forest"></a-entity>
+
+      <!-- Basic movement, selection and teleport  -->
+      <a-entity id="rig" movement-controls="constrainToNavMesh: true;" position="0 0 5">
+            <a-entity id="cam" camera position="0 1.6 0" look-controls="pointerLockEnabled: true" animation="property: position;
+                                         dur: 15000;
+                                         from: 0 30 50;
+                                         to: 0 1.6 0;
+                                         easing: easeInOutSine;
+                                         loop: false;
+                                         direction: normal">
+
+                  <a-entity id="Points" position="-2 1.0 -5" text-geometry="value: Left trigger to teleport, right trigger disappears objects.; opacity: .5; size: .175; font: https://rawgit.com/mrdoob/three.js/dev/examples/fonts/optimer_bold.typeface.json"></a-entity>
+
+            </a-entity>
+
+            <a-entity id="leftController" hand-controls="left" tracked-controls vive-controls="hand: left" oculus-touch-controls="hand: left"
+                 windows-motion-controls="hand: left" teleport-controls="cameraRig: #rig; button: trigger; curveShootingSpeed: 13; collisionEntities: #navmesh-step;" visible="true" scale="0.5 0.5 0.5"  ></a-entity>
+
+            <a-entity id="rightController" hand-controls="right" tracked-controls vive-controls="hand: right" oculus-touch-controls="hand: right"
+                 windows-motion-controls="hand: right" laser-controls raycaster="showLine: true; far: 40; interval: 0; objects: .clickable, a-link;" line="color: lawngreen; opacity: 0.5" visible="true" scale="0.5 0.5 0.5" ></a-entity>
+
+      </a-entity>
+
+      <a-box id="box" position="-5.26077 0.65874 -4" rotation="-90 0 0" scale="1 1 0.025" width="4" height="4" color="#FFFFFF" shadow="false" material="src: #grid; opacity: 1;" ></a-box>
+      <a-box id="box-2" position="-0.10215 3.21591 1.32841" rotation="-90 0 0" scale="1 1 0.025" width="4" height="4" color="#FFFFFF" shadow="false" material="src: #grid; opacity: 1;" ></a-box>
+      <a-box id="box-3" position="-5.26 0.659 -4.00" rotation="-90 0 0" scale="1 1 0.025" width="4" height="4" color="#FFFFFF" shadow="false" material="src: #grid; opacity: 1;" ></a-box>
+      <a-box id="box-4" position="4.554 4.854 -6.674" rotation="-90 0 0" scale="1 1 0.025" width="4" height="4" color="#FFFFFF" shadow="false" material="src: #grid; opacity: 1;" ></a-box>
+      <a-box id="box-5" position="-5.26 8.203 -4.347" rotation="-90 0 0" scale="1 1 0.025" width="4" height="4" color="#FFFFFF" shadow="false" material="src: #grid; opacity: 1;" ></a-box>
+      <a-box id="box-6" position="2.477 10.74 0.793" rotation="-90 0 0" scale="1 1 0.025" width="4" height="4" color="#FFFFFF" shadow="false" material="src: #grid; opacity: 1;" ></a-box>
+
+      <!-- Marble Fountain from SketchFab https://sketchfab.com/3d-models/fountain-2e9061fb2e974bf796a8c9c8ffb0cc98  -->
+      <a-entity id="marbleWaterFountain" gltf-model="#marbleFountain" scale="0.75 0.75 0.75" position="0 -0.25283 -4.495" ></a-entity>
+
+      <!-- Modified water for fountain  -->
+      <a-entity id="waterFountain" position="0 1.559 -4.495" scale="0.75 0.75 0.75" particle-system="color:#000, #FFF;velocitySpread:15 13.75 15;velocityValue:0 12 0;accelerationSpread:1 0 1;particleCount:75;maxAge:10.5;texture:https://rocketvirtual.com/webvr/images/dot2.png"></a-entity>
+
+        <a-box id="planetButton" class="clickable" position = "0 26 -14" material="src: #planet_cntl-image" scale="1.25 1.25 .25" onclick="changePlanet();" 
+                  animation="property: position;
+                                dir: alternate;
+                                    dur: 20000;
+                            easing: easeInSine;
+                                    loop: true;
+                                  to: 0 5 -14" begin="8000"></a-box>
+
+        <a-box id="playButton" class="clickable" position = "-2 26 -14" material="src: #music-image_on" scale="1.25 1.25 .25" onclick="playSound();" animation="property: position;
+                                dir: alternate;
+                                    dur: 20000;
+                            easing: easeInSine;
+                                    loop: true;
+                                  to: -2 5 -14" begin="8000" audiohandler ></a-box>
+
+        <a-box id="gameLogo" position="0 29.5 -18" scale="5.48 4.76 5.36" multisrc="srcs:#right,#left,#top,#bottom,#front,#back" animation="property: rotation;
+                                      fill: forwards;
+                                        dur: 50000;
+                                        begin: 8000;
+                                         to: 0 360 0;
+                                         repeat: indefinite"  opacity="1"></a-box>
+
+
+<!-- Controls for display of video screen, seems to work nicely, javascript below </scene> tag below -->
+     
+          <!-- MEDIAS HOLDER -->
+          <a-sound id="alert-sound" src="src: url(https://rocketvirtual.com/webvr/assets/action.wav)" autoplay="false" position="0 0 0"></a-sound>
+          <a-video id="video-screen" src="#video-src" position="0 4 -9.575" width="8" height="4" rotation="0 0 0" visible="false"></a-video>
+          <!-- END MEDIAS HOLDER -->
+
+          <!-- CONTROLS -->
+          <a-image class="clickable" id="control-back" width="0.4" height="0.4" src="#seek-back" position="-0.8 4 -0.876" visible="false" scale="0.85 0.85 0.85"></a-image>
+          <a-image class="clickable" id="control-play" width="0.4" height="0.4" src="#play" position="0 4 -0.876"></a-image>
+          <a-image class="clickable" id="control-volume" width="0.4" height="0.4" src="#volume-mute" position="0.8 4 -0.876" visible="false" scale="0.75 0.75 0.75"></a-image>
+          <!-- END CONTROLS -->
+
+          <!-- PROGRESSBAR -->
+          <a-entity id="progress-bar" geometry="primitive:plane;height:0.1;width:4" material="opacity:0;transparent:true;visible:false" position="0 0.987 -9.575" rotation="0 0 0">
+          <a-plane id="progress-bar-track" width="4" height="0.1" color="gray" position="0 0 0" opacity="0.2" visible="false"></a-plane>
+          <a-plane id="progress-bar-fill" width="1.3027969689224046" height="0.1" color="#7198e5" position="-1.3486015155387978 0 0.01" geometry="" visible="false"></a-plane>
+          <!-- END PROGRESSBAR -->
+
+    <!-- Setup tracs A-I for the carousel.  Not a true circle, but it works...  Varying the y-axis for height in air of object following trac.  Could be more complex tracks in the future. -->
+
+    <a-curve id="tracA" >
+        <a-curve-point position="0 1 8" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="5 1 6" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="7 1 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="5 1 -5" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="0 1 -7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-6 1 -5" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="-8 1 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-6 1 6" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="0 1 8" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+    </a-curve>
+
+
+    <a-curve id="tracB" curve="">
+        <a-curve-point position="0 7 2" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-6 7 4" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="-8 7 10" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-6 7 15" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="0 7 17" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="6 7 14" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="7 7 10" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="6 7 5" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="0 7 2" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+    </a-curve>
+
+
+    <a-curve id="tracC" curve="">
+        <a-curve-point position="12 5 11" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="14 5 6" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="10 5 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="6 5 -1" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="0 5 2" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-2 5 7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="1 5 12" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="6 5 14" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="12 5 11" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+    </a-curve>
+
+    <a-curve id="tracD" curve="">
+        <a-curve-point position="9 20 -7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="3 20 -5" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="1 20 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="5 20 6" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="9 20 8" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="14 20 6" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="16 20 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="14 20 -5" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="9 20 -7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+    </a-curve>
+
+
+    <a-curve id="tracE" curve="">
+        <a-curve-point position="0 1 -12" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-2 1 -7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="0 1 -3" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="6 1 1" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="9 1 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="13 1 -4" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="13 1 -9" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="8 1 -14" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="0 1 -12" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+    </a-curve>
+
+
+    <a-curve id="tracF" curve="">
+        <a-curve-point position="7 14 -9" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="5 14 -15" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="0 14 -17" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-6 14 -15" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-8 14 -9" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-4 14 -3" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="3 14 -3" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="7 14 -9" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+    </a-curve>
+
+    <a-curve id="tracG" curve="">
+        <a-curve-point position="1 24 -7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-3 24 -13" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="-11 24 -13" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-14 24 -9" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-13 24 -2" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-7 24 1" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="-3 24 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="0 24 -3" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="1 24 -7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+    </a-curve>
+
+
+    <a-curve id="tracH" curve="">
+        <a-curve-point position="-2 10 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-4 10 -5" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="-10 10 -7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-15 10 -5" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-17 10 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-15 10 6" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="-10 10 8" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-4 10 6" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-2 10 0" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+    </a-curve>
+
+
+    <a-curve id="tracI" curve="">
+        <a-curve-point position="-12 1 1" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-14 1 9" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="-9 1 14" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-1 1 12" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="1 1 7" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-1 1 2" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>  
+        <a-curve-point position="-6 1 -1" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+        <a-curve-point position="-12 1 1" geometry="height:0.1;width:0.1;depth:0.1" material="color:#ff0000" curve-point="" visible="false"></a-curve-point>
+    </a-curve>
+
+
+
+    <!-- objects following the trac.  Letter A-I corresponds to trac curve above.  Collada and glTF objects loaded here... Note: All objects are royalty free and/or created by me. -->
+
+
+    <a-entity id="sittingDuckA" class="clickable" gltf-model="#horse" alongpath="curve:#tracA;loop:true;dur:12000;rotate:true" scale="" position="-4.27 1 -6" shadow="receive:false" rotation="-24 -90 90" onclick="stopPoints();shoot_raygun('horse');" cursor-listener></a-entity>
+
+    <a-entity id="sittingDuckB" class="clickable" gltf-model="#duck" alongpath="curve:#tracB;loop:true;dur:14000;rotate:true" position="4.29 1 15.43" shadow="receive:false" rotation="0 261.96 0" scale="1 1 1" animation__rotate="property:rotation;dur:3000;easing:linear;loop:true;from:0 0 0;to:0 360 0" onclick="stopPoints();shoot_raygun('duck');" cursor-listener></a-entity>
+
+    <a-entity id="sittingDuckC" class="clickable"  gltf-model="#key" alongpath="curve:#tracC;loop:true;dur:12000;rotate:true" position="-1.77 1 5.17" shadow="receive:false" rotation="0 261.96 0" scale="" animation__rotate="property:rotation;dur:3000;easing:linear;loop:true;from:0 0 0;to:0 360 0" onclick="stopPoints();shoot_raygun('key');" cursor-listener></a-entity>
+
+    <a-entity id="sittingDuckD" class="clickable" gltf-model="#flyingsaucer" alongpath="curve:#tracD;loop:true;dur:12000;rotate:true" position="12.44 1 7.12" shadow="receive:false" rotation="0 261.96 0" scale="4.5 4.5 4.5" animation__rotate="property:rotation;dur:3000;easing:linear;loop:true;from:0 0 0;to:0 360 0" onclick="stopPoints();shoot_raygun('saucer');" cursor-listener></a-entity>
+
+    <a-entity id="sittingDuckE" class="clickable" gltf-model="#horse" scale="" alongpath="curve:#tracE;loop:true;dur:12000;rotate:true" position="11.90 1 -2.37" shadow="receive:false" rotation="0 138.07 0" onclick="stopPoints();shoot_raygun('horse');" cursor-listener></a-entity>
+
+    <a-entity id="sittingDuckF" class="clickable" gltf-model="#trex" alongpath="curve:#tracF;loop:true;dur:9000;rotate:true" position="-7.92 1 -8.56" shadow="receive:false" rotation="0 13.05 0" animation__rotate="property:rotation;dur:3000;easing:linear;loop:true;from:0 0 0;to:0 360 0" scale="1 1 1" onclick="stopPoints();shoot_raygun('trex');" cursor-listener></a-entity>
+
+    <a-entity id="sittingDuckG" class="clickable" gltf-model="#triceratops" alongpath="curve:#tracG;loop:true;dur:12000;rotate:true" position="-9.22 1 0.45" shadow="receive:false" rotation="0 70.51 0" scale="0.35 0.35 0.35" onclick="stopPoints();shoot_raygun('ceratops');" cursor-listener></a-entity>
+
+    <a-entity id="sittingDuckH" class="clickable" gltf-model="#rocket" alongpath="curve:#tracH;loop:true;dur:14000;rotate:true" position="-16.13 1 4.16" shadow="receive:false" rotation="0 23.64 0" scale="3.5 3.5 3.5" onclick="stopPoints();shoot_raygun('rocket');" cursor-listener></a-entity>
+
+    <a-entity id="sittingDuckI" class="clickable" gltf-model="#raygun" scale="" alongpath="curve:#tracI;loop:true;dur:12000;rotate:true" position="0.98 1 6.65" shadow="receive:false" rotation="0 -175.74 0" onclick="stopPoints();shoot_raygun('raygun');" cursor-listener></a-entity>
+
+<!-- stationary hearts -->
+
+
+    <a-obj-model id="sittingDuckK" class="clickable" position="2.5 3.6 -8" scale="0.02 0.02 0.02" src="#heart" material="color: #F585D3"
+       animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>
+    <a-obj-model id="sittingDuckL" class="clickable" position="1.5 3.6 -8" scale="0.03 0.03 0.03" src="#heart" material="color: #B876F6"
+       animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>   
+    <a-obj-model id="sittingDuckM" class="clickable" position="0.1 3.6 -8" scale="0.04 0.04 0.04" src="#heart" material="color: #E9EDF8"
+       animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>
+
+    <a-obj-model id="sittingDuckO" class="clickable" position="2.5 8.6 -6" scale="0.02 0.02 0.02" src="#heart" material="color: #F44268"
+       animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>
+    <a-obj-model id="sittingDuckP" class="clickable" position="1.5 8.6 -6" scale="0.03 0.03 0.03" src="#heart" material="color: #F44268"
+       animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>   
+    <a-obj-model id="sittingDuckQ" class="clickable" position="0.1 8.6 -6" scale="0.04 0.04 0.04" src="#heart" material="color: #F44268"
+       animation__rotate="property: rotation; dur: 5000; easing: linear; loop: true; to: 0 360 0" shadow="receive:false" onclick="stopPoints();shoot_raygun('heart');" cursor-listener></a-obj-model>
+
+  
+
+    <!-- Tune the world environment to the desired settings  -->
+
+    <a-entity class="environment" position="-1.2 2.94 3.03" light="intensity:0.45;castShadow:true;shadowCameraLeft:-20;shadowCameraBottom:-20;shadowCameraRight:20;shadowCameraTop:20" visible=""></a-entity>
+    <a-entity class="environmentDressing environment" visible="false"></a-entity>
+
+    </a-scene>
+
+    <script type="text/javascript">
+      var AVideoPlayer = function() {
+      // Vals
+      this.duration         = 0;
+      this.current_progress = 0;
+      this.progressWidth    = 4;
+      this.paused           = true;
+      // Elems
+      this.elProgressBar   = null;
+      this.elProgressTrack = null;
+      this.elProgressFill  = null;
+      this.elAlertSound    = null;
+      this.elVideo         = null;
+      this.elVideoScreen   = null;
+      this.elControlBack   = null;
+      this.elControlPlay   = null;
+      this.elControlVolume = null;
+      this._initElements = function() {
+        this.elProgressBar   = document.getElementById('progress-bar');
+        this.elProgressTrack = document.getElementById('progress-bar-track');
+        this.elProgressFill  = document.getElementById('progress-bar-fill');
+        this.elAlertSound    = document.getElementById('alert-sound');
+        this.elVideo         = document.getElementById('video-src');
+        this.elVideoScreen   = document.getElementById('video-screen');
+        this.elControlBack   = document.getElementById('control-back');
+        this.elControlPlay   = document.getElementById('control-play');
+        this.elControlVolume = document.getElementById('control-volume');
+      }
+      /**
+      * PROGRESS
+      */
+      this.setProgress = function(progress) {
+        var new_progress = this.progressWidth*progress;
+        this._setProgressWidth(new_progress);
+        var progress_coord = this._getProgressCoord();
+        if (progress_coord != undefined) {
+         progress_coord.x = -(this.progressWidth-new_progress)/2;
+         this._setProgressCoord(progress_coord);
+        }
+      }
+      this._getProgressCoord = function() {
+        return AFRAME.utils.coordinates.parse(this.elProgressFill.getAttribute("position"))
+      }
+      this._getProgressWidth = function() {
+        return parseFloat(this.elProgressFill.getAttribute("width"));
+      }
+      this._setProgressCoord = function(coord) {
+        this.elProgressFill.setAttribute("position", coord);
+      }
+      this._setProgressWidth = function(width) {
+        this.elProgressFill.setAttribute("width", width);
+      }
+      /*
+      * UI SETTERS
+      */
+      this.isProgressBarVisible = function(isVisible) {
+        this.elProgressTrack.setAttribute("visible", isVisible);
+        this.elProgressFill.setAttribute("visible", isVisible);
+      }
+      this.isControlVisible = function(isVisible) {
+        this.elControlBack.setAttribute("visible", isVisible);
+        this.elControlVolume.setAttribute("visible", isVisible);
+        this.elVideoScreen.setAttribute("visible", isVisible);
+      }
+      /*
+      * EVENTS
+      */
+      this._addPlayerEvents = function() {
+        var that = this;
+        this.elVideo.pause();
+        this.elVideo.onplay = function() {
+          that.duration = this.duration;
+        }
+        this.elVideo.ontimeupdate = function() {
+          if (that.duration > 0) {
+            that.current_progress = this.currentTime/that.duration;
+          }
+          that.setProgress(that.current_progress);
+        }
+      }
+      this._addControlsEvent = function() {
+        var that = this;
+        this.elControlPlay.addEventListener('click', function () {
+          that._playAudioAlert();
+          if (that.elVideo.paused) {
+            this.setAttribute('src', '#pause');
+            that.elVideo.play();
+            that.paused = false;
+            that.isProgressBarVisible(true);
+            that.isControlVisible(true);
+          } else {
+            this.setAttribute('src', '#play');
+            that.elVideo.pause();
+            that.paused = true;
+            that.isProgressBarVisible(false);
+            that.isControlVisible(false);
+         }
+        });
+        this.elControlVolume.addEventListener('click', function () {
+          that._playAudioAlert();
+          if (that.elVideo.muted) {
+            that.elVideo.muted = false;
+            this.setAttribute('src', '#volume-normal');
+          } else {
+            that.elVideo.muted = true;
+            this.setAttribute('src', '#volume-mute');
+          }
+        });
+        this.elControlBack.addEventListener('click', function () {
+          that._playAudioAlert();
+          that.elVideo.currentTime = 0;
+        });
+      }
+      this._addProgressEvent = function() {
+        var that = this;
+        this.elProgressBar.addEventListener('click', function (e) {
+          if (e.detail == undefined || e.detail.intersection == undefined || that.duration === 0) {
+            return;
+          }
+          let seekedPosition = (e.detail.intersection.point.x+(that.progressWidth/2))/that.progressWidth;
+          try {
+            let seekedTime = seekedPosition*that.duration;
+            that.elVideo.currentTime = seekedTime;
+          } catch (e) {
+          }
+        });
+      }
+      this._playAudioAlert = function() {
+        if (this.elAlertSound.components !== undefined && this.elAlertSound.components.sound !== undefined) {
+         this.elAlertSound.components.sound.playSound();
+        }
+      }
+      /**
+      * MOBILE PATCH TO PLAY VIDEO
+      */
+      this._mobileFriendly = function() {
+        if (AFRAME.utils.device.isMobile()) {
+          var that = this;
+          let video_permission        = document.getElementById('video-permission');
+         let video_permission_button = document.getElementById('video-permission-button');
+          video_permission.style.display = 'block';
+          video_permission_button.addEventListener("click", function() {
+            video_permission.style.display = 'none';
+            that.elVideo.play();
+            that.elVideo.pause();
+          }, false);
+        }
+      }
+      this.init = function() {
+        this._initElements();
+        //this._determinateProgressWidth();
+        this.setProgress(this.current_progress);
+        this._addPlayerEvents();
+        this._addControlsEvent();
+        this._addProgressEvent();
+        this._mobileFriendly();
+      }
+      this.init();
+    }
+      let scene = document.querySelector('a-scene');
+      var cursor = document.querySelector('a-cursor');
+      /**
+      * CINEMA MODE
+      */
+      scene.lightOff = function() {
+        scene.islightOn = true;
+        scene.removeAttribute('animation__fogback');
+        scene.setAttribute('animation__fog', "property: fog.color; to: #0c192a; dur: 800; easing: easeInQuad;");
+      }
+      scene.lightOn = function() {
+        scene.islightOn = false;
+        scene.removeAttribute('animation__fog');
+        scene.setAttribute('animation__fogback', "property: fog.color; to: #dbdedb; dur: 800");
+      }
+      /**
+      * AVideoPlayer
+      */
+      var videoPlayer = new AVideoPlayer();
+      document.querySelector('#control-play').addEventListener('click', function () {
+        if (videoPlayer.paused) {
+          scene.lightOn()
+        } else {
+          scene.lightOff();
+        }
+      });
+    </script>
+
+  </body>
+</html>
